@@ -121,12 +121,12 @@ func handleConn(conn net.Conn) {
 	// 控制超时用户踢出
 	var userActive = make(chan struct{})
 	go func() {
-		d := 1 * time.Minute
+		d := 5 * time.Minute
 		timer := time.NewTimer(d)
 		for {
 			select {
 			case <-timer.C:
-				conn.Close()
+				conn.Close() // 如果用户 5 分钟内未发送任何消息，那么服务端会自动将连接断开
 			case <-userActive:
 				timer.Reset(d)
 			}
@@ -135,7 +135,7 @@ func handleConn(conn net.Conn) {
 
 	// 5. 循环读取用户的输入
 	input := bufio.NewScanner(conn)
-	for input.Scan() {
+	for input.Scan() { // 服务端将连接断开之后， input.Scan() 会返回 false
 		msg.Content = strconv.Itoa(user.ID) + ":" + input.Text()
 		messageChannel <- msg
 
