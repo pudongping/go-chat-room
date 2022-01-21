@@ -45,13 +45,19 @@ func (u *User) String() string {
 		u.EnterAt.Format("2006-01-02 15:04:05+8000")
 }
 
+// 给用户发送的消息
+type Message struct {
+	OwnerID int    // 发送消息者的 id
+	Content string // 消息内容
+}
+
 var (
 	// 新用户到来，通过该 channel 进行登记
 	enteringChannel = make(chan *User)
 	// 用户离开，通过该 channel 进行登记
 	leavingChannel = make(chan *User)
 	// 广播专用的用户普通消息 channel，缓冲是尽可能避免出现异常情况堵塞，这里简单给了 8，具体值根据情况调整
-	messageChannel = make(chan string, 8)
+	messageChannel = make(chan Message, 8)
 )
 
 // broadcaster 用于记录聊天室用户，并进行消息广播：
@@ -73,7 +79,10 @@ func broadcaster() {
 		case msg := <-messageChannel: // 全局的 messageChannel 用来给聊天室所有用户广播消息
 			// 给所有在线用户发送消息
 			for user := range users {
-				user.MessageChannel <- msg
+				if user.ID == msg.OwnerID { // 当发送者为自己时，则不推送消息
+					continue
+				}
+				user.MessageChannel <- msg.Content
 			}
 		}
 	}
@@ -86,7 +95,7 @@ func handleConn(conn net.Conn) {
 	// 1. 新用户进来，构建该用户的实例
 	user := &User{
 		ID:             GenUserID(),
-		Addr:           conn.RemoteAddr().String(),
+		Addr:           conn.RemoteAddr().String(), // ip 地址
 		EnterAt:        time.Now(),
 		MessageChannel: make(chan string, 8),
 	}
@@ -100,15 +109,38 @@ func handleConn(conn net.Conn) {
 	// 3. 给当前用户发送欢迎信息
 	// 同时给聊天室所有用户发送有新用户到来的提醒
 	user.MessageChannel <- "Welcome, " + user.String()
-	messageChannel <- "user:`" + strconv.Itoa(user.ID) + "` has enter"
+	msg := Message{
+		OwnerID: user.ID,
+		Content: "user:`" + strconv.Itoa(user.ID) + "` has enter",
+	}
+	messageChannel <- msg
 
 	// 4. 将该记录到全局的用户列表中，避免用锁
 	enteringChannel <- user
 
+	// 控制超时用户踢出
+	var userActive = make(chan struct{})
+	go func() {
+		d := 1 * time.Minute
+		timer := time.NewTimer(d)
+		for {
+			select {
+			case <-timer.C:
+				conn.Close()
+			case <-userActive:
+				timer.Reset(d)
+			}
+		}
+	}()
+
 	// 5. 循环读取用户的输入
 	input := bufio.NewScanner(conn)
 	for input.Scan() {
-		messageChannel <- strconv.Itoa(user.ID) + ":" + input.Text()
+		msg.Content = strconv.Itoa(user.ID) + ":" + input.Text()
+		messageChannel <- msg
+
+		// 用户活跃
+		userActive <- struct{}{}
 	}
 
 	if err := input.Err(); err != nil {
@@ -117,7 +149,8 @@ func handleConn(conn net.Conn) {
 
 	// 6. 用户离开，需要做登记，并给聊天室其他用户发通知
 	leavingChannel <- user
-	messageChannel <- "user:`" + strconv.Itoa(user.ID) + "` has left"
+	msg.Content = "user:`" + strconv.Itoa(user.ID) + "` has left"
+	messageChannel <- msg
 
 }
 
