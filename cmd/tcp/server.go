@@ -168,7 +168,9 @@ var (
 )
 
 func GenUserID() int {
+	// 加锁
 	idLocker.Lock()
+	// 解锁
 	defer idLocker.Unlock()
 
 	globalID++
