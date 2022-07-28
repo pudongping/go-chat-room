@@ -111,6 +111,7 @@
                 this.joinchat();
             }
 
+            // 实现自动重连
             setInterval(this.keepAlive, 10000);
         },
         computed: {
@@ -135,10 +136,12 @@
                     // 打开一个 websocket 连接
                     gWS = new WebSocket("ws://"+host+"/ws?nickname="+this.curUser.nickname+"&token="+this.curUser.token);
 
+                    // 用于指定连接成功后的回调函数
                     gWS.onopen = function () {
                         // WebSocket 已连接上的回调
                     };
 
+                    // 用于指定当从服务器接收到信息时的回调函数
                     gWS.onmessage = function (evt) {
                         let data = JSON.parse(evt.data);
                         if (data.type == 4) {
@@ -148,6 +151,7 @@
                         } else if (data.type == 1) {
                             // 欢迎消息
                             that.curUser = data.user;
+                            // 记录用户昵称到本地存储
                             localStorage.setItem('user', JSON.stringify(data.user));
 
                             data.user = {nickname: '', uid: 0};
@@ -175,11 +179,13 @@
                         that.addMsg2List(data);
                     };
 
+                    // 用于指定连接失败后的回调函数
                     gWS.onerror = function(evt) {
                         console.log("发生错误：");
                         console.log(evt);
                     };
 
+                    // 用于指定连接关闭后的回调函数
                     gWS.onclose = function () {
                         console.log("连接已关闭")
                     };
@@ -189,6 +195,8 @@
                 }
             },
             leavechat: function() {
+
+                // 主动断开连接
                 gWS.close();
 
                 that.msglist.splice(0);
@@ -199,12 +207,15 @@
                     content: '您已离开聊天室，再见！',
                 });
 
+                // 不可以直接使用 this.users = []; 因为，这样使用的话 vue 无法监听数据
                 this.users.splice(0);
 
                 this.joined = false;
             },
             sendChatContent: function() {
                 let msg = JSON.stringify({"content": this.content});
+
+                // 发送消息
                 gWS.send(msg);
 
                 let data = {
@@ -303,12 +314,14 @@
             // 保活
             keepAlive: function() {
                 // 表明异常退出了
+                // WebSocket 有一个属性 readyState 可以判定当前连接的状态
                 if (gWS.readyState == WebSocket.CLOSED && this.joined) {
                     console.log("reconnect");
                     this.joinchat();
                 }
             },
         },
+        // 更换 vue 的分隔符
         delimiters:['${', '}']
     })
 
