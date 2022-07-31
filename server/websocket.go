@@ -9,6 +9,8 @@ import (
 	"nhooyr.io/websocket/wsjson"
 )
 
+// WebSocketHandleFunc 叫做 conn goroutine，也可以称为 read goroutine
+// ws 链接时触发
 func WebSocketHandleFunc(w http.ResponseWriter, req *http.Request) {
 	// Accept 从客户端接受 WebSocket 握手，并将连接升级到 WebSocket。
 	// 如果 Origin 域与主机不同，Accept 将拒绝握手，除非设置了 InsecureSkipVerify 选项（通过第三个参数 AcceptOptions 设置）。
@@ -23,6 +25,7 @@ func WebSocketHandleFunc(w http.ResponseWriter, req *http.Request) {
 	token := req.FormValue("token")
 	nickname := req.FormValue("nickname")
 	if l := len(nickname); l < 2 || l > 20 {
+		// 昵称非法
 		log.Println("nickname illegal: ", nickname)
 		wsjson.Write(req.Context(), conn, logic.NewErrorMessage("非法昵称，昵称长度：2-20"))
 		conn.Close(websocket.StatusUnsupportedData, "nickname illegal!")
@@ -38,6 +41,7 @@ func WebSocketHandleFunc(w http.ResponseWriter, req *http.Request) {
 	userHasToken := logic.NewUser(conn, token, nickname, req.RemoteAddr)
 
 	// 2. 开启给用户发送消息的 goroutine
+	// 给用户发送消息的 goroutine 称作为 write goroutine
 	go userHasToken.SendMessage(req.Context())
 
 	// 3. 给当前用户发送欢迎信息
