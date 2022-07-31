@@ -10,6 +10,7 @@ import (
 	"github.com/pudongping/go-chat-room/logic"
 )
 
+// homeHandleFunc 只是简单的渲染前端页面
 func homeHandleFunc(w http.ResponseWriter, req *http.Request) {
 	tpl, err := template.ParseFiles(global.RootDir + "/template/home.html")
 	if err != nil {
