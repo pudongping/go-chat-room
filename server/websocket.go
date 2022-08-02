@@ -22,8 +22,8 @@ func WebSocketHandleFunc(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// 1. 新用户进来，构建该用户的实例
-	token := req.FormValue("token")
-	nickname := req.FormValue("nickname")
+	token := req.FormValue("token")       // 获取用户 token
+	nickname := req.FormValue("nickname") // 获取到用户昵称
 	if l := len(nickname); l < 2 || l > 20 {
 		// 昵称非法
 		log.Println("nickname illegal: ", nickname)
@@ -38,6 +38,7 @@ func WebSocketHandleFunc(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	// 创建该用户的实例
 	userHasToken := logic.NewUser(conn, token, nickname, req.RemoteAddr)
 
 	// 2. 开启给用户发送消息的 goroutine
