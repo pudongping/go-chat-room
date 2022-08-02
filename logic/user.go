@@ -21,6 +21,7 @@ import (
 
 var globalUID uint32 = 0
 
+// User 一个 User 代表一个进入了聊天室的用户
 type User struct {
 	UID            int           `json:"uid"`
 	NickName       string        `json:"nickname"`
@@ -34,7 +35,7 @@ type User struct {
 	isNew bool
 }
 
-// 系统用户，代表是系统主动发送的消息
+// System 系统用户，代表是系统主动发送的消息
 var System = &User{}
 
 func NewUser(conn *websocket.Conn, token, nickname, addr string) *User {
@@ -64,6 +65,7 @@ func NewUser(conn *websocket.Conn, token, nickname, addr string) *User {
 	return user
 }
 
+// SendMessage 给用户发送消息的 goroutine
 func (u *User) SendMessage(ctx context.Context) {
 	for msg := range u.MessageChannel {
 		wsjson.Write(ctx, u.conn, msg)
@@ -75,12 +77,16 @@ func (u *User) CloseMessageChannel() {
 	close(u.MessageChannel)
 }
 
+// ReceiveMessage 接收用户消息
 func (u *User) ReceiveMessage(ctx context.Context) error {
 	var (
 		receiveMsg map[string]string
 		err        error
 	)
 	for {
+		// 当用户主动退出聊天室时，wsjson.Read 会返回错，除此之外，可能还有其他原因导致返回错误。
+		// 这两种情况应该加以区分。这得益于 Go1.13 errors 包的新功能和 nhooyr.io/websocket 包对该新功能的支持，
+		// 我们可以通过 As 来判定错误是不是连接关闭导致的
 		err = wsjson.Read(ctx, u.conn, &receiveMsg)
 		if err != nil {
 			// 判定连接是否关闭了，正常关闭，不认为是错误
