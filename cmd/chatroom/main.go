@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	_ "net/http/pprof"
 
+	"github.com/pudongping/go-chat-room/global"
 	"github.com/pudongping/go-chat-room/server"
 )
 
@@ -21,6 +23,10 @@ var (
 
 `
 )
+
+func init() {
+	global.Init()
+}
 
 func main() {
 	fmt.Printf(banner+"\n", addr)
