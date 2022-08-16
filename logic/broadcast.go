@@ -43,6 +43,7 @@ type broadcaster struct {
 	usersChannel        chan []*User
 }
 
+// Broadcaster 实例化一个广播实例，方便外部调用
 var Broadcaster = &broadcaster{
 	users: make(map[string]*User),
 
