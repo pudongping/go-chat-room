@@ -61,6 +61,15 @@ var Broadcaster = &broadcaster{
 
 // Start 启动广播器
 // 需要在一个新 goroutine 中运行，因为它不会返回
+// - select 关键字和 { 之间不允许存在任何表达式和语句；
+//
+// - fallthrough 语句不能使用；
+//
+// - 每个 case 关键字后必须跟随一个 channel 接收数据操作或者一个 channel 发送数据操作，所以叫做专门为 channel 设计的；
+//
+// - 所有的非阻塞 case 操作中将有一个被随机选择执行（而不是按照从上到下的顺序），然后执行此操作对应的 case 分支代码块；
+//
+// - 在所有的 case 操作均阻塞的情况下，如果 default 分支存在，则 default 分支代码块将得到执行； 否则，当前 goroutine 进入阻塞状态；
 func (b *broadcaster) Start() {
 	for {
 		select {
