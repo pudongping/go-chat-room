@@ -67,6 +67,13 @@ func NewUser(conn *websocket.Conn, token, nickname, addr string) *User {
 
 // SendMessage 给用户发送消息的 goroutine
 func (u *User) SendMessage(ctx context.Context) {
+	// 根据 for-range 用于 channel 的语法，默认情况下，for-range 不会退出。
+	// 很显然，如果我们不做特殊处理，这里的 goroutine 会一直存在。
+	// 而实际上，当用户离开聊天室时，它对应连接的写 goroutine 应该终止。
+	// 这也就是上面 Start 方法中，在用户离开聊天室的 channel 收到消息时，
+	// 要将用户的 MessageChannel 关闭的原因。
+	// MessageChannel 关闭了，for msg := range u.MessageChannel 就会退出循环，
+	// goroutine 结束，避免了内存泄露
 	for msg := range u.MessageChannel {
 		wsjson.Write(ctx, u.conn, msg)
 	}
