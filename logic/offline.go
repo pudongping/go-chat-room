@@ -7,6 +7,7 @@ import (
 )
 
 type offlineProcessor struct {
+	// n 表示需要保存的最近的 n 条消息
 	n int
 
 	// 保存所有用户最近的 n 条消息
@@ -50,6 +51,9 @@ func (o *offlineProcessor) Save(msg *Message) {
 }
 
 func (o *offlineProcessor) Send(user *User) {
+	// 这是一个方便的遍历环的方法。
+	// 该方法接收一个回调函数，函数的参数是当前环元素的 Value。
+	// 该遍历是按照向前的方向进行的。因此，我们可以这样输出我们初始化的环
 	o.recentRing.Do(func(value interface{}) {
 		if value != nil {
 			user.MessageChannel <- value.(*Message)
