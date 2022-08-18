@@ -9,36 +9,36 @@
 ```shell
 
 ├── LICENSE
-├── README.md
-├── cmd
-│   ├── chatroom
-│   │   └── main.go
-│   ├── tcp
-│   │   ├── client.go
-│   │   └── server.go
-│   └── websocket
-│       ├── client.go
-│       ├── server_gorilla.go
-│       └── server_nhooyr.go
-├── config
-│   └── chatroom.yaml
-├── global
-│   ├── config.go
-│   └── init.go
+├── README.md  -- 说明文档
+├── cmd  -- 命令行目录
+│   ├── chatroom  -- 基于浏览器作为 websocket 客户端的聊天室目录
+│   │   └── main.go  -- 入口文件
+│   ├── tcp  -- tcp 聊天室目录
+│   │   ├── client.go  -- tcp 聊天室 websocket 客户端
+│   │   └── server.go  -- tcp 聊天室 websocket 服务端
+│   └── websocket  -- websocket 第三方插件包 demo 代码目录
+│       ├── client.go  -- nhooyr.io/websocket 库 websocket 客户端
+│       ├── server_gorilla.go  -- gorilla/websocket 库 websocket 服务端
+│       └── server_nhooyr.go  -- nhooyr.io/websocket 库 websocket 服务端
+├── config  -- 配置文件目录
+│   └── chatroom.yaml  -- 配置文件
+├── global  -- 全局变量目录
+│   ├── config.go  -- 读取配置信息
+│   └── init.go  -- 初始化变量
 ├── go.mod
 ├── go.sum
-├── logic
-│   ├── broadcast.go
-│   ├── message.go
-│   ├── offline.go
-│   ├── sensitive.go
-│   └── user.go
-├── server
-│   ├── handle.go
-│   ├── home.go
-│   └── websocket.go
-└── template
-    └── home.html
+├── logic  -- 逻辑层
+│   ├── broadcast.go  -- 广播器
+│   ├── message.go  -- 各种消息类型
+│   ├── offline.go  -- 发送离线消息
+│   ├── sensitive.go  -- 过滤敏感词（直接暴力的替换）
+│   └── user.go  -- 用户生成 token、解析 token、接收消息
+├── server  -- 服务层
+│   ├── handle.go  -- 路由处理
+│   ├── home.go  -- http 路由对应的处理方法
+│   └── websocket.go  -- websocket 路由对应的处理方法
+└── template  -- 模版层
+    └── home.html  -- 聊天室前端页面
 
 ```
 
@@ -123,6 +123,8 @@ go run cmd/chatroom/main.go
 ```
 
 ### 多使用几个浏览器访问 `127.0.0.1:2022`
+
+> 需要先输入一个昵称，然后加入聊天室，才能够发送消息
 
 #### 浏览器 1
 
