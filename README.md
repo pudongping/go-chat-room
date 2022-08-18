@@ -98,3 +98,32 @@ go run cmd/websocket/client.go
 
 ```
 
+## 3. 基于浏览器作为客户端的聊天室
+
+> 项目入口文件在 `cmd/chatroom` 目录中 `main.go` 文件
+
+### 代码测试方式
+
+```shell
+
+# 先启动 websocket 服务端
+go run cmd/chatroom/main.go
+# output is：
+# 
+#    ____              _____
+#   |    |    |   /\     |
+#   |    |____|  /  \    | 
+#   |    |    | /----\   |
+#   |____|    |/      \  |
+#
+#        Go-Chat-Room，start on :2022
+#
+#
+
+```
+
+### 多使用几个浏览器访问 `127.0.0.1:2022`
+
+![image.png](https://upload-images.jianshu.io/upload_images/14623749-d728e7741cf05df5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![image.png](https://upload-images.jianshu.io/upload_images/14623749-56ed8b7131eb5e2a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
