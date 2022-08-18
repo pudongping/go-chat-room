@@ -1,3 +1,4 @@
+// 使用 gorilla/websocket 库写的 websocket 服务端代码
 package main
 
 import (
