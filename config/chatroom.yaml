@@ -7,6 +7,7 @@ sensitive:
   - 傻人
   - 傻逼
 
+# 保存最近的 n 条离线消息
 offline-num: 10
 
 token-secret: 2zrvOpl5u14Y
