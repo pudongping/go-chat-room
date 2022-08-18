@@ -112,6 +112,7 @@ func (u *User) ReceiveMessage(ctx context.Context) error {
 		sendMsg.Content = FilterSensitive(sendMsg.Content)
 
 		// 解析 content，看看 @ 谁了
+		// 这里要求昵称必须 2-20 个字符
 		reg := regexp.MustCompile(`@[^\s@]{2,20}`)
 		sendMsg.Ats = reg.FindAllString(sendMsg.Content, -1)
 
