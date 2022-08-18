@@ -15,6 +15,7 @@ var RootDir string
 var once = new(sync.Once)
 
 func Init() {
+	// 该类型的 Do 方法中的代码保证只会执行一次
 	once.Do(func() {
 		inferRootDir()
 		initConfig()
