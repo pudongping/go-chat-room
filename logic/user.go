@@ -32,6 +32,7 @@ type User struct {
 
 	conn *websocket.Conn
 
+	// isNew 用来判断进来的用户是不是第一次加入聊天室
 	isNew bool
 }
 
@@ -120,6 +121,7 @@ func (u *User) ReceiveMessage(ctx context.Context) error {
 	}
 }
 
+// genToken 为用户生成 token
 func genToken(uid int, nickname string) string {
 	secret := viper.GetString("token-secret")
 	message := fmt.Sprintf("%s%s%d", nickname, secret, uid)
@@ -149,6 +151,7 @@ func parseTokenAndValidate(token, nickname string) (int, error) {
 }
 
 func macSha256(message, secret []byte) []byte {
+	// 使用 HMAC-SHA256 计算 hash
 	mac := hmac.New(sha256.New, secret)
 	mac.Write(message)
 	return mac.Sum(nil)
