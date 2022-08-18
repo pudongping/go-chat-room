@@ -1,3 +1,5 @@
+// 在实际的开发过程中建议使用 nhooyr.io/websocket 这个库
+// 因为它更容易使用、性能更好、也更符合 Go 的风格
 package main
 
 import (
