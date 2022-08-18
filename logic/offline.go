@@ -29,6 +29,7 @@ func newOfflineProcessor() *offlineProcessor {
 	}
 }
 
+// Save 离线消息的存入
 func (o *offlineProcessor) Save(msg *Message) {
 	if msg.Type != MsgTypeNormal {
 		return
@@ -50,6 +51,7 @@ func (o *offlineProcessor) Save(msg *Message) {
 	}
 }
 
+// Send 离线消息的读取（发送）
 func (o *offlineProcessor) Send(user *User) {
 	// 这是一个方便的遍历环的方法。
 	// 该方法接收一个回调函数，函数的参数是当前环元素的 Value。
