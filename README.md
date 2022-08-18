@@ -124,6 +124,14 @@ go run cmd/chatroom/main.go
 
 ### 多使用几个浏览器访问 `127.0.0.1:2022`
 
+#### 浏览器 1
+
 ![image.png](https://upload-images.jianshu.io/upload_images/14623749-d728e7741cf05df5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
+#### 浏览器 2
+
 ![image.png](https://upload-images.jianshu.io/upload_images/14623749-56ed8b7131eb5e2a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+#### 终端显示为
+
+![image.png](https://upload-images.jianshu.io/upload_images/14623749-7233fbf12bc9363f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
