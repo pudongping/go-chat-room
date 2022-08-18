@@ -86,6 +86,7 @@ func (b *broadcaster) Start() {
 		case msg := <-b.messageChannel:
 			// 给所有在线用户发送消息
 			for _, user := range b.users {
+				// 群发消息的时候，消息内容不发给自己
 				if user.UID == msg.User.UID {
 					continue
 				}
