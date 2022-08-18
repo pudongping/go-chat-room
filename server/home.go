@@ -25,6 +25,7 @@ func homeHandleFunc(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+// userListHandleFunc 查看用户列表
 func userListHandleFunc(w http.ResponseWriter, req *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
