@@ -42,7 +42,7 @@
 
 ```
 
-## 1. 基于 tcp 的简单聊天室
+## 1. 基于 tcp 协议的简单聊天室
 
 > 所有涉及到的代码都在 `cmd/tcp` 目录下
 
@@ -75,7 +75,7 @@ go run cmd/tcp/client.go
 
 ```
 
-## 2. 使用第三方库写的一个简要 demo
+## 2. 使用第三方库写的一个简要 demo（基于 websocket 协议）
 
 > 所有涉及到的代码都在 `cmd/websocket` 目录下
 
@@ -98,7 +98,7 @@ go run cmd/websocket/client.go
 
 ```
 
-## 3. 基于浏览器作为客户端的聊天室
+## 3. 基于浏览器作为客户端的聊天室（基于 websocket 协议）
 
 > 项目入口文件在 `cmd/chatroom` 目录中 `main.go` 文件
 
@@ -137,3 +137,19 @@ go run cmd/chatroom/main.go
 #### 终端显示为
 
 ![image.png](https://upload-images.jianshu.io/upload_images/14623749-7233fbf12bc9363f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+### 聊天室性能测试
+
+```shell
+
+# 编译成二进制文件
+go build -o chatroom cmd/chatroom/main.go
+
+# 启动聊天室
+./chatroom
+ 
+# 性能测试
+# 尝试 10 个用户同时进入聊天室，并每 20s 各发送一条消息
+go run cmd/benchmark/main.go -u 10 -m 20s -l 0  
+
+```
