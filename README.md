@@ -151,5 +151,7 @@ go build -o chatroom cmd/chatroom/main.go
 # 性能测试
 # 尝试 10 个用户同时进入聊天室，并每 20s 各发送一条消息
 go run cmd/benchmark/main.go -u 10 -m 20s -l 0  
+# 尝试 200 个用户每个用户间隔 10ms 进入聊天室，并每隔 20s 各发送一条消息
+go run cmd/benchmark/main.go -u 200 -m 20s -l 10ms  
 
 ```
