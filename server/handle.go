@@ -10,7 +10,7 @@ func RegisterHandle() {
 	// 广播消息处理
 	go logic.Broadcaster.Start()
 
-	http.HandleFunc("/", homeHandleFunc)
-	http.HandleFunc("/user_list", userListHandleFunc)
-	http.HandleFunc("/ws", WebSocketHandleFunc)
+	http.HandleFunc("/", homeHandleFunc)              // 首页
+	http.HandleFunc("/user_list", userListHandleFunc) // 在线用户列表
+	http.HandleFunc("/ws", WebSocketHandleFunc)       // 处理 ws 服务
 }
