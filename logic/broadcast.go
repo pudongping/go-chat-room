@@ -8,6 +8,7 @@ import (
 	"github.com/pudongping/go-chat-room/global"
 )
 
+// curl 'http://127.0.0.1:2022/debug/vars'
 func init() {
 	expvar.Publish("message_queue", expvar.Func(calcMessageQueueLen))
 }
