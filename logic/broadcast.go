@@ -97,7 +97,7 @@ func (b *broadcaster) Start() {
 
 			// 存储离线消息
 			OfflineProcessor.Save(msg)
-		case nickname := <-b.checkUserChannel:
+		case nickname := <-b.checkUserChannel: // 判断用户昵称是否已经存在，如果存在，则不允许加入聊天室，不存在，才允许加入聊天室
 			if _, ok := b.users[nickname]; ok {
 				b.checkUserCanInChannel <- false
 			} else {
