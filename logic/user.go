@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"regexp"
 	"strings"
 	"sync/atomic"
@@ -40,6 +41,9 @@ type User struct {
 var System = &User{}
 
 func NewUser(conn *websocket.Conn, token, nickname, addr string) *User {
+
+	log.Printf("初始化用户 %v  ==> %v \n", nickname, addr)
+
 	user := &User{
 		NickName:       nickname,
 		Addr:           addr,
@@ -91,6 +95,7 @@ func (u *User) ReceiveMessage(ctx context.Context) error {
 		receiveMsg map[string]string
 		err        error
 	)
+
 	for {
 		// 当用户主动退出聊天室时，wsjson.Read 会返回错，除此之外，可能还有其他原因导致返回错误。
 		// 这两种情况应该加以区分。这得益于 Go1.13 errors 包的新功能和 nhooyr.io/websocket 包对该新功能的支持，
@@ -100,6 +105,7 @@ func (u *User) ReceiveMessage(ctx context.Context) error {
 			// 判定连接是否关闭了，正常关闭，不认为是错误
 			var closeErr websocket.CloseError
 			if errors.As(err, &closeErr) {
+				log.Println("客户端主动断开")
 				return nil
 			} else if errors.Is(err, io.EOF) {
 				return nil
@@ -112,6 +118,8 @@ func (u *User) ReceiveMessage(ctx context.Context) error {
 		sendMsg := NewMessage(u, receiveMsg["content"], receiveMsg["send_time"])
 		sendMsg.Content = FilterSensitive(sendMsg.Content)
 
+		log.Printf("接收到的消息为 %+v  ==> %+v \n", receiveMsg, sendMsg)
+
 		// 解析 content，看看 @ 谁了
 		// 这里要求昵称必须 2-20 个字符
 		reg := regexp.MustCompile(`@[^\s@]{2,20}`)
@@ -119,6 +127,7 @@ func (u *User) ReceiveMessage(ctx context.Context) error {
 
 		Broadcaster.Broadcast(sendMsg)
 	}
+
 }
 
 // genToken 为用户生成 token
