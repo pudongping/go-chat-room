@@ -122,23 +122,60 @@ go run cmd/chatroom/main.go
 
 ```
 
-### 多使用几个浏览器访问 `127.0.0.1:2022`
+#### 1. 多使用几个浏览器访问 `127.0.0.1:2022`
 
 > 需要先输入一个昵称，然后加入聊天室，才能够发送消息
 
-#### 浏览器 1
+##### 浏览器 1
 
 ![image.png](https://upload-images.jianshu.io/upload_images/14623749-d728e7741cf05df5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-#### 浏览器 2
+##### 浏览器 2
 
 ![image.png](https://upload-images.jianshu.io/upload_images/14623749-56ed8b7131eb5e2a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-#### 终端显示为
+##### 终端显示为
 
 ![image.png](https://upload-images.jianshu.io/upload_images/14623749-7233fbf12bc9363f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-### 聊天室性能测试
+#### 2. 通过其他连接工具进行测试
+
+```shell
+
+# 请求的地址为：
+# （参数 nickname 一定要加上）
+ws://127.0.0.1:2022/ws?nickname=alex
+
+# 请求体为 json 格式字符串
+{"content": "hello world"}
+
+```
+
+大致会有如下效果：（内容来自程序标准输出）
+
+```shell
+
+└─(01:43:23 on main ✹)──> go run cmd/chatroom/main.go                                                                                                                                                                              1 ↵ ──(Tue,Aug23)─┘
+
+    ____              _____
+   |    |    |   /\     |
+   |    |____|  /  \    | 
+   |    |    | /----\   |
+   |____|    |/      \  |
+
+        Go-Chat-Room，start on :2022
+
+
+2022/08/23 01:43:36 初始化用户 alex  ==> 127.0.0.1:64792 
+2022/08/23 01:43:36 user: alex joins chat
+2022/08/23 01:43:38 接收到的消息为 map[content:hello world]  ==> &{User:0xc0001b42a0 Type:0 Content:hello world MsgTime:2022-08-23 01:43:38.568831 +0800 CST m=+9.336244850 ClientSendTime:0001-01-01 00:00:00 +0000 UTC Ats:[]} 
+2022/08/23 01:43:39 接收到的消息为 map[content:hello world]  ==> &{User:0xc0001b42a0 Type:0 Content:hello world MsgTime:2022-08-23 01:43:39.587222 +0800 CST m=+10.354605629 ClientSendTime:0001-01-01 00:00:00 +0000 UTC Ats:[]} 
+2022/08/23 01:43:55 客户端主动断开
+2022/08/23 01:43:55 user: alex leaves chat
+
+```
+
+#### 3. 聊天室性能测试
 
 ```shell
 
